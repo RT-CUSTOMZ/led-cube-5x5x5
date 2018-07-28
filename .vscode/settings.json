@@ -1,0 +1,17 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/sguelland/.platformio/penv/bin:/home/sguelland/.platformio/penv:/app/bin:/usr/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    },
+    "files.associations": {
+        "board_sd.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "stm32f4xx_hal_conf.h": "c",
+        "ff.h": "c",
+        "uart_cmd.h": "c",
+        "crc16ibm.h": "c",
+        "board.h": "c",
+        "rgbframebuffer.h": "c",
+        "board_config.h": "c"
+    }
+}

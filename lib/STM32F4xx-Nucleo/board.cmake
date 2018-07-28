@@ -1,0 +1,19 @@
+cmake_minimum_required (VERSION 2.8.3)
+
+set(STM32_ARCH STM32F411xE)
+
+#set(PROVIDES_USB_DEVICE ON)
+#set(PROVIDES_USB_HOST ON)
+#set(PROVIDES_STM32_USB_FS ON)
+#set(PROVIDES_AUDIO ON)
+
+
+set(CONFIGURE_STM32_HAL ON)
+
+add_definitions(-DSTM32F411xE)
+add_definitions(-DHSE_VALUE=8000000)
+
+include_directories("${CMAKE_CURRENT_LIST_DIR}")
+SET( BOARD_SRC
+${CMAKE_CURRENT_LIST_DIR}/stm32f4xx_nucleo.c
+)

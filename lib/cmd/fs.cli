@@ -1,0 +1,7 @@
+
+ls { <STRING:path> }
+
+//cd <STRING:path>
+
+cat <STRING:path>
+
