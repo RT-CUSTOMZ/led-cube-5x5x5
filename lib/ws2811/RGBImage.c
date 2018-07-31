@@ -10,7 +10,7 @@
 #include <string.h>
 #include "board_config.h"
 
-RGBPixel rgbImage[PIXELCOUNT];
+RGBPixel rgbImage[512]; //[PIXELCOUNT];
 
 //#define lookupValue(v) (lookupTable[v])
 

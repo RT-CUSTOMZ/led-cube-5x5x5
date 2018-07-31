@@ -20,7 +20,7 @@ typedef union _RGBPixel {
 } RGBPixel;
 
 //extern const uint8_t pixelMap[8];
-extern RGBPixel rgbImage[PIXELCOUNT];
+extern RGBPixel rgbImage[512]; //[PIXELCOUNT];
 
 void processImage(const RGBPixel* image);
 

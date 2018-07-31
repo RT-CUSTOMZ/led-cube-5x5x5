@@ -34,4 +34,26 @@ static inline void board_serialnumber(char* ptr, uint32_t len){
 		BOOTLOADER_FLAG = 0xDEADBEEF;\
 		NVIC_SystemReset();}
 
+// Hinzugefuegt fuer sd init
+
+#include "stm32f4xx_hal.h"
+#include "stm32f4xx_hal_sd.h"
+
+#define MSD_OK         0x00
+#define MSD_ERROR      0x01
+
+#define BLOCK_SIZE                512
+
+
+#define SD_CardInfo HAL_SD_CardInfoTypeDef
+#define BSP_SD_CardInfo HAL_SD_CardInfoTypeDef;
+
+#define SD_DATATIMEOUT           ((uint32_t)100000000)
+
+#define SD_PRESENT               ((uint8_t)0x01)
+#define SD_NOT_PRESENT           ((uint8_t)0x00)
+
+
 #endif /* BOARD_H_ */
+
+

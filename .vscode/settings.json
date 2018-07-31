@@ -12,6 +12,14 @@
         "crc16ibm.h": "c",
         "board.h": "c",
         "rgbframebuffer.h": "c",
-        "board_config.h": "c"
+        "board_config.h": "c",
+        "ffconf.h": "c",
+        "ff_gen_drv.h": "c",
+        "diskio.h": "c",
+        "integer.h": "c",
+        "sd_diskio.h": "c",
+        "rgbimagemap.h": "c",
+        "rgbimage.h": "c",
+        "main.h": "c"
     }
 }

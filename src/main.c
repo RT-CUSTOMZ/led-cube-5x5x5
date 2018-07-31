@@ -44,6 +44,8 @@ static const uint8_t cmd_ping[] = {
 	'\n'
 };
 
+void SD_Init(void);
+
 // static UARTCmd uart_cmd;
 UART_HandleTypeDef huart;
 int main(void)
@@ -70,16 +72,29 @@ int main(void)
 	rgbImage[0].blue = 64;
 	processImage(rgbImage);
 
+	SD_Init();
+
 	// initCubeProgram();
+
+	change_effect(0);
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;)
 	{
+		uint32_t tick = HAL_GetTick();
 		// HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
 		UARTCmd_Tick(&uart_cmd);
 		// UARTCmd_Send((uint8_t *)cmd_ping, sizeof(cmd_ping), &uart_cmd);
 		// printf("ping pong\n");
 		// processImage(rgbImage);
 		// HAL_Delay(1);
+
+		static uint32_t nextImageTick = 50;
+		if(nextImageTick <= tick) {
+			nextImageTick = tick + 50;
+			render_effect(rgbImage);
+			processImage(rgbImage);
+		}
+		
 	}
 }
