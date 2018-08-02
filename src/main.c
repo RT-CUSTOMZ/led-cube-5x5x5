@@ -4,6 +4,8 @@
 #include "RGBImage.h"
 #include "crc16ibm.h"
 #include "uart_cmd.h"
+#include "mode.h"
+#include "button.h"
 
 #include <string.h>
 #include <stdint.h>
@@ -45,6 +47,7 @@ static const uint8_t cmd_ping[] = {
 };
 
 void SD_Init(void);
+void uart_cmd_mode_watchdog(void);
 
 // static UARTCmd uart_cmd;
 UART_HandleTypeDef huart;
@@ -73,6 +76,7 @@ int main(void)
 	processImage(rgbImage);
 
 	SD_Init();
+	button_init();
 
 	// initCubeProgram();
 
@@ -84,17 +88,20 @@ int main(void)
 		uint32_t tick = HAL_GetTick();
 		// HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
 		UARTCmd_Tick(&uart_cmd);
+		button_tick();
+		uart_cmd_mode_watchdog();
 		// UARTCmd_Send((uint8_t *)cmd_ping, sizeof(cmd_ping), &uart_cmd);
 		// printf("ping pong\n");
 		// processImage(rgbImage);
 		// HAL_Delay(1);
 
-		static uint32_t nextImageTick = 50;
-		if(nextImageTick <= tick) {
-			nextImageTick = tick + 50;
-			render_effect(rgbImage);
-			processImage(rgbImage);
+		if( Mode_intern == get_mode() ) {
+			static uint32_t nextImageTick = 50;
+			if(nextImageTick <= tick) {
+				nextImageTick = tick + 50;
+				render_effect(rgbImage);
+				processImage(rgbImage);
+			}
 		}
-		
 	}
 }

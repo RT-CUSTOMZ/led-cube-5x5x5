@@ -4,7 +4,19 @@
 #include <stdint.h>
 
 #include "uart_cmd.h"
+#include "mode.h"
+#include "ff.h"
 
+#include "raw_sd_player.h"
+
+static uint32_t lastExternalPaketTick;
+void uart_cmd_mode_watchdog(void) {
+	if(Mode_extern == get_mode() && 
+	   ( (lastExternalPaketTick + 10000) < HAL_GetTick() ) 
+	   ){
+		set_mode(Mode_intern);
+	}
+}
 
 typedef enum e_uart_cmd_state
 {
@@ -46,24 +58,18 @@ typedef struct Uart_Cmd_s
 
 static Uart_header_t uart_header;
 
-typedef enum e_mode_state
-{
-	Mode_extern,
-	Mode_intern,
-} t_mode_state;
-t_mode_state cube_mode = Mode_intern;
-
 #include "RGBImage.h"
 #include "crc16ibm.h"
 
-// static bool recording = false;
-// static uint32_t record_counter = 0;
+static bool recording = false;
+static FIL saveRawImagefile;
 // static uint32_t record_dir = 0;
 
 void uart_handle_command(Uart_header_t uart_header, uint8_t *data)
 {
-	debug_led_toggle();
-	//					 blankPixelBuffer(rgbImage);
+	char string_buffer[30];
+	FRESULT ret;
+
 	switch (uart_header.command)
 	{
 	case COMMAND_FRAME:
@@ -75,54 +81,74 @@ void uart_handle_command(Uart_header_t uart_header, uint8_t *data)
 				rgbImage[i].green = data[i * 3 + 1];
 				rgbImage[i].blue = data[i * 3 + 2];
 			}
+			set_mode(Mode_extern);
+			lastExternalPaketTick = HAL_GetTick();
 			printf("Get image from WIFI\n\r");
+			if(recording) {
+				RGBPixel red = {
+					.red   = 255,
+					.green = 0,
+					.blue  = 0,
+				};
+				uint32_t write_count;
+				ret = f_write (&saveRawImagefile,(const void *) &rgbImage[0], 512, &write_count);
+				if(FR_OK != ret) {
+					printf("Error saving image code: %d\n\r", ret);
+					rgbImage[0]  = red;
+					rgbImage[4]  = red;
+					rgbImage[19] = red;
+					rgbImage[24] = red;
+				}
+				rgbImage[0] = red;
+			}
 			processImage((const RGBPixel*)&rgbImage);
 		}
 		break;
 	case COMMAND_CMD:
 		printf("Get cmd from WIFI\n\r");
 		{
-			//  Uart_cmd_t* cmd_ptr = data;
+			 Uart_cmd_t* cmd_ptr = data;
 
-			//  switch(cmd_ptr->cmd)
-			//  {
-			//  case CMD_NEXT_EFFECT:
-			// 	 MCP_Cmd(MCP_MESSAGE_NEXT_EFFECT);
-			// 	 cube_mode = Mode_intern;
-			// 	 break;
+			 switch(cmd_ptr->cmd)
+			 {
+			 case CMD_NEXT_EFFECT:
+				set_mode(Mode_intern);
+				next_effect();
+				break;
 			//  case CMD_NEXT_MODULE:
 			// 	 MCP_Cmd(MCP_MESSAGE_NEXT_MODULE);
 			// 	 cube_mode = Mode_intern;
 			// 	 break;
-			//  case CMD_RECORD_ON:
-			// 	 recording = true;
-			// 	 record_counter = 0;
-			// 	 cube_mode = Mode_extern;
-			// 	 printf("recording on\n\r");
-			// 	 snprintf(string_buffer,sizeof(string_buffer), "raw/%06d/%06d.png", record_dir, record_counter);
-			// 	 printf("Save Image to: %s\n\r",string_buffer);
-			// 	 {
-			// 		 f_close(&loadRawImagefile);
-			// 		FRESULT ret = f_open(&saveRawImagefile, string_buffer, FA_WRITE | FA_CREATE_ALWAYS);
-			// 		if (ret) {
-			// 			printf("could not open file %s for writing, code: %d\n\r", string_buffer, ret);
-			// 			return;
-			// 		}
-			// 	 }
-			// 	 break;
-			//  case CMD_RECORD_OFF:
-			//  {
-			// 	 recording = false;
-			// 	 printf("recording off\n\r");
-			// 	 FRESULT result = f_close(&saveRawImagefile);
-			// 	 if(FR_OK != result)
-			// 	 	printf("error f_close failed, code %d\n", result);
-			// 	 break;
-			//  }
-			//  default:
-			// 	 printf("cmd not found: %d\n\r",cmd_ptr->cmd);
-			// 	 break;
-			//  }
+			 case CMD_RECORD_ON: {
+					recording = true;
+					uint16_t record_counter = 0;
+					printf("recording on\n\r");
+					do{
+						snprintf(string_buffer,sizeof(string_buffer), "raw/%06d.raw", record_counter);
+						ret = f_open(&saveRawImagefile, string_buffer, FA_WRITE | FA_CREATE_NEW);
+						record_counter++;
+					} while (FR_EXIST == ret);
+					if(FR_OK == ret) {
+						printf("Save Image to: %s\n\r",string_buffer);
+					} else {
+						f_close(&saveRawImagefile);
+						printf("could not open file %s for writing, code: %d\n\r", string_buffer, ret);
+					}
+				}
+				break;
+			 case CMD_RECORD_OFF:
+			 {
+				 recording = false;
+				 printf("recording off\n\r");
+				 FRESULT result = f_close(&saveRawImagefile);
+				 if(FR_OK != result)
+				 	printf("error f_close failed, code %d\n", result);
+				 break;
+			 }
+			 default:
+				 printf("cmd not found: %d\n\r",cmd_ptr->cmd);
+				 break;
+			 }
 		}
 		break;
 	default:

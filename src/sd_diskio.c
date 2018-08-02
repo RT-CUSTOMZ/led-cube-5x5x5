@@ -161,10 +161,10 @@ DRESULT disk_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
     {
       HAL_SD_CardStateTypeDef state = HAL_SD_GetCardState(&uSdHandle);
       printf("GetCardState: %d\n",state);
-      // if (timeout-- == 0)
-      // {
-      //   return RES_ERROR;
-      // }
+      if (timeout-- == 0)
+      {
+        return RES_ERROR;
+      }
     }
     res = RES_OK;
   }
@@ -191,8 +191,9 @@ DRESULT disk_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
                         count, 
                         10000))
   {
-    while(HAL_SD_CARD_READY != HAL_SD_GetCardState(&uSdHandle))
+    while(HAL_SD_CARD_TRANSFER != HAL_SD_GetCardState(&uSdHandle))
     {
+      HAL_SD_CardStateTypeDef state = HAL_SD_GetCardState(&uSdHandle);
       if (timeout-- == 0)
       {
         return RES_ERROR;
