@@ -152,7 +152,7 @@ DRESULT disk_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 
   if(HAL_OK == HAL_SD_ReadBlocks(
                        &uSdHandle,
-                       (uint32_t*)buff,
+                       (uint8_t*)buff,
                        (uint32_t) (sector),
                        count, 
                        100000))
@@ -186,14 +186,13 @@ DRESULT disk_write(BYTE lun, const BYTE *buff, DWORD sector, UINT count)
   uint32_t timeout = 100000;
 
   if(HAL_OK == HAL_SD_WriteBlocks(&uSdHandle,
-                        (uint32_t*)buff,
+                        (uint8_t*)buff,
                         (uint32_t)(sector),
                         count, 
                         10000))
   {
     while(HAL_SD_CARD_TRANSFER != HAL_SD_GetCardState(&uSdHandle))
     {
-      HAL_SD_CardStateTypeDef state = HAL_SD_GetCardState(&uSdHandle);
       if (timeout-- == 0)
       {
         return RES_ERROR;
@@ -229,14 +228,14 @@ DRESULT disk_ioctl(BYTE lun, BYTE cmd, void *buff)
 
   /* Get number of sectors on the disk (DWORD) */
   case GET_SECTOR_COUNT :
-    HAL_SD_GetCardStatus(&uSdHandle, &CardInfo);
+    HAL_SD_GetCardInfo(&uSdHandle, &CardInfo);
     *(DWORD*)buff = CardInfo.LogBlockNbr;
     res = RES_OK;
     break;
 
   /* Get R/W sector size (WORD) */
   case GET_SECTOR_SIZE :
-   HAL_SD_GetCardStatus(&uSdHandle, &CardInfo);
+   HAL_SD_GetCardInfo(&uSdHandle, &CardInfo);
     *(WORD*)buff = CardInfo.LogBlockSize;
 
     res = RES_OK;
@@ -244,7 +243,7 @@ DRESULT disk_ioctl(BYTE lun, BYTE cmd, void *buff)
 
   /* Get erase block size in unit of sector (DWORD) */
   case GET_BLOCK_SIZE :
-   HAL_SD_GetCardStatus(&uSdHandle, &CardInfo);
+   HAL_SD_GetCardInfo(&uSdHandle, &CardInfo);
     *(DWORD*)buff = CardInfo.LogBlockSize;
     res = RES_OK;
     break;

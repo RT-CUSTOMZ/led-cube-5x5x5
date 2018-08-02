@@ -10,24 +10,10 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "raw_sd_player.h"
+
 
 void SystemClock_Config(void);
-
-
-#define LED_PIN                                GPIO_PIN_5
-#define LED_GPIO_PORT                          GPIOA
-#define LED_GPIO_CLK_ENABLE()                  __HAL_RCC_GPIOA_CLK_ENABLE()
-
-static void LED_Init() {
-  LED_GPIO_CLK_ENABLE();
-  GPIO_InitTypeDef GPIO_InitStruct;
-  GPIO_InitStruct.Pin = LED_PIN;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-  HAL_GPIO_Init(LED_GPIO_PORT, &GPIO_InitStruct);
-}
-
 
 void uart_cmd_input(uint8_t *data, uint32_t len, void *userPtr);
 static UARTCmd uart_cmd = {
@@ -38,14 +24,6 @@ static UARTCmd uart_cmd = {
 void debug_uart_init();
 void debug_uart_send(const uint8_t *data, uint32_t len);
 
-static const uint8_t cmd_ping[] = {
-	'C','U','B','E','S','Y','N','C',
-	0x02, 0x00, //len
-	0x02, 0x00, //cmd
-	0x01, 0x00,  //next effect
-	'\n'
-};
-
 void SD_Init(void);
 void uart_cmd_mode_watchdog(void);
 
@@ -54,9 +32,6 @@ UART_HandleTypeDef huart;
 int main(void)
 {
 	HAL_Init();
-    // LED_Init();
-
-	// debug_led_init();
 
 	/* Configure the system clock to 180 Mhz */
 	SystemClock_Config();

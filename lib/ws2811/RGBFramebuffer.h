@@ -24,7 +24,7 @@ extern volatile uint16_t buffer4[];
 extern volatile uint16_t buffer5[];
 
 void initFramebuffer(void);
-void tickFramebuffer (void);
+void updateFramebuffer (void);
 void blankFrameBuffer(void);
 
 #endif /* RGBFRAMEBUFFER_H_ */

@@ -13,30 +13,9 @@ void SD_Init(void) {
 	FRESULT res;                                          /* FatFs function common result code */
 
 	/*##-2- Register the file system object to the FatFs module ##############*/
-	if(f_mount(&SDFatFs, (TCHAR const*)SDPath, 0) != FR_OK)
-	{
+	res = f_mount(&SDFatFs, (TCHAR const*)SDPath, 0) != FR_OK;
+	if(FR_OK != res) {
 		/* FatFs Initialization Error */
 		printf("POST: Error mounting sd-card\n");
 	}
-	else {
-		// DIR dir;
-		// res = f_opendir(&dir,"/");
-		// printf("opendir: %d\n",res);
-		// res = f_opendir(&dir,"/");
-		// printf("opendir: %d\n",res);
-	}
-
-
-
-
-
-// 	HAL_StatusTypeDef status;
-
-
-// // check card status 
-// 	HAL_SD_CardStatusTypedef cardStatus;
-// 	status = HAL_SD_GetCardStatus(&uSdHandle, &cardStatus);
-// 	if(HAL_OK != status)
-// 		printf("HAL_SD_Init failes: %d", status);
-
 }

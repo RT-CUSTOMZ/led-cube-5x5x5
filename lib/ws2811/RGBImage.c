@@ -116,7 +116,8 @@ void processImage(const RGBPixel* image) {
 
 	for(uint32_t i = 0; i< framebuffer_pixel_maps_count;i++) {
 		FramebufferPixelMap pixel_map = framebuffer_pixel_maps[i];
-		volatile uint32_t * base = SRAM_BB_BASE + ( ((uint32_t)pixel_map.framebuffer - SRAM_BASE) * 0x20);
+		volatile uint32_t * base = (uint32_t *)
+			(SRAM_BB_BASE + ( ((uint32_t)pixel_map.framebuffer - SRAM_BASE) * 0x20) );
 
 		for(uint_fast16_t j = 0; j < pixel_map.size ; j++){
 			Pixel_Mapping pixel_mapping = pixel_map.map[j];

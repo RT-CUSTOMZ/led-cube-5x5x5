@@ -20,6 +20,10 @@
         "sd_diskio.h": "c",
         "rgbimagemap.h": "c",
         "rgbimage.h": "c",
-        "main.h": "c"
+        "main.h": "c",
+        "array": "c",
+        "initializer_list": "c",
+        "string_view": "c",
+        "utility": "c"
     }
 }

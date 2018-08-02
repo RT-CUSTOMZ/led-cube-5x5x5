@@ -90,7 +90,7 @@ void uart_handle_command(Uart_header_t uart_header, uint8_t *data)
 					.green = 0,
 					.blue  = 0,
 				};
-				uint32_t write_count;
+				unsigned int write_count;
 				ret = f_write (&saveRawImagefile,(const void *) &rgbImage[0], 512, &write_count);
 				if(FR_OK != ret) {
 					printf("Error saving image code: %d\n\r", ret);
@@ -107,7 +107,7 @@ void uart_handle_command(Uart_header_t uart_header, uint8_t *data)
 	case COMMAND_CMD:
 		printf("Get cmd from WIFI\n\r");
 		{
-			 Uart_cmd_t* cmd_ptr = data;
+			 Uart_cmd_t* cmd_ptr = (Uart_cmd_t*) data;
 
 			 switch(cmd_ptr->cmd)
 			 {

@@ -14,6 +14,8 @@
 
 #include <boost/preprocessor.hpp>
 
+void updateFramebuffer(void);
+
 #define DECL_FRAMEBUFFER_CLOCK(z, n, text) FRAMEBUFFER ## n ## _CLOCK();
 #define FRAMEBUFFER_CLOCKS() BOOST_PP_REPEAT(FRAMEBUFFER_COUNT, DECL_FRAMEBUFFER_CLOCK, 0)
 
@@ -379,11 +381,8 @@ void TIMx_CC4_DMA_IRQHandler(void)
   HAL_DMA_IRQHandler(TimHandle.hdma[TIM_DMA_ID_CC4]);
 }
 
-static volatile frameBufferSelector = 0;
+static volatile uint32_t frameBufferSelector = 0;
 
-void updateFramebuffer(void);
-
-//void TIMx_AAR_DMA_IRQHandler(void)
 void __attribute__ ((section(".after_vectors")))
 DMA2_Stream5_IRQHandler(void)
 {
@@ -401,12 +400,12 @@ void updateFramebuffer(void)
 		frameBufferSelector = 0;
 }
 
-void tickFramebuffer(void) {
-}
-
 void blankFrameBuffer(void) {
 	for(uint32_t i = 0; i < sizeof(framebuffers) / sizeof(framebuffers[0]); i++) {
 		uint32_t size =  framebuffers[i].size * sizeof(framebuffers[i].buffer[0]);
-		memcpy(framebuffers[i].buffer,framebuffers[i].periode, size);
+		memcpy(
+			(void *) framebuffers[i].buffer,
+			framebuffers[i].periode, 
+			size );
 	}
 }
