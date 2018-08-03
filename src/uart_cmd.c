@@ -7,7 +7,7 @@
 #include "mode.h"
 #include "ff.h"
 
-#include "raw_sd_player.h"
+#include "player.h"
 
 static uint32_t lastExternalPaketTick;
 void uart_cmd_mode_watchdog(void) {
@@ -115,10 +115,9 @@ void uart_handle_command(Uart_header_t uart_header, uint8_t *data)
 				set_mode(Mode_intern);
 				next_effect();
 				break;
-			//  case CMD_NEXT_MODULE:
-			// 	 MCP_Cmd(MCP_MESSAGE_NEXT_MODULE);
-			// 	 cube_mode = Mode_intern;
-			// 	 break;
+			 case CMD_NEXT_MODULE:
+				next_module();
+				break;
 			 case CMD_RECORD_ON: {
 					recording = true;
 					uint16_t record_counter = 0;

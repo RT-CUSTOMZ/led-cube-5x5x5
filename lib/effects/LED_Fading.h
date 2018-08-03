@@ -13,7 +13,7 @@
 
 
 void LED_Fading_init(void);
-void LED_Fading_run(RGBPixel *pixelBuffer);
+bool LED_Fading_run(RGBPixel *pixelBuffer);
 
 
 #endif /* LEDTEST_H_ */

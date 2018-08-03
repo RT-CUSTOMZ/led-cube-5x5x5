@@ -1,5 +1,5 @@
 #include "board.h"
-#include "raw_sd_player.h"
+#include "player.h"
 
 #define BUTTON_SHORT_TICK_TIME	(50)
 #define BUTTON_LONG_TICK_TIME	(500)
@@ -34,7 +34,7 @@ void button_tick(void) {
             //rising edge
             if( (last_falling_edge_tick + BUTTON_LONG_TICK_TIME) <  HAL_GetTick() ) {
                 //long
-                next_effect();
+                next_module();
             } else if ( (last_falling_edge_tick + BUTTON_SHORT_TICK_TIME) <  HAL_GetTick() ) {
                 //short tick
                 next_effect();

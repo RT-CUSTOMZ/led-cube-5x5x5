@@ -65,7 +65,7 @@ void LED_Fading_init(void)
 #endif
 }
 
-void LED_Fading_run(RGBPixel *pixelBuffer) {
+bool LED_Fading_run(RGBPixel *pixelBuffer) {
 	uint8_t clockValue;
 	RGBPixel pixel;
 
@@ -85,5 +85,6 @@ void LED_Fading_run(RGBPixel *pixelBuffer) {
 
 		pixelBuffer[i] = pixel;
 	}
-	processImage(pixelBuffer);
+	// processImage(pixelBuffer);
+	return true;
 }

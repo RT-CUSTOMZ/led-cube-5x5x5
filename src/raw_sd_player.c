@@ -5,10 +5,10 @@
 #include "raw_sd_player.h"
 
 static FIL file = {0};
-uint32_t effect_number = UINT32_MAX;
+static uint32_t effect_number = UINT32_MAX;
 
-bool change_effect(uint_fast16_t number) {
-    close_effect();
+bool raw_sd_player_change_effect(uint_fast16_t number) {
+    raw_sd_player_close_effect();
 
 	char string_buffer[30];
 	snprintf(
@@ -38,14 +38,14 @@ bool change_effect(uint_fast16_t number) {
     }
 }
 
-void next_effect(void) {
-    bool result = change_effect(effect_number +1);
+void raw_sd_player_next_effect(void) {
+    bool result = raw_sd_player_change_effect(effect_number +1);
     if( false == result) {
-        change_effect(0);
+        raw_sd_player_change_effect(0);
     }
 }
 
-void close_effect(void) {
+void raw_sd_player_close_effect(void) {
     FRESULT res;
     if(UINT32_MAX != effect_number) {
         res = f_close(&file);
@@ -56,7 +56,7 @@ void close_effect(void) {
     }
 }
 
-bool render_effect(RGBPixel* image) {
+bool raw_sd_player_render_effect(RGBPixel* image) {
     FRESULT res;
     uint_fast32_t read_coount;
 

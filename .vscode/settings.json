@@ -24,6 +24,7 @@
         "array": "c",
         "initializer_list": "c",
         "string_view": "c",
-        "utility": "c"
+        "utility": "c",
+        "raw_sd_player.h": "c"
     }
 }

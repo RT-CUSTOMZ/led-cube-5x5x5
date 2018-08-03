@@ -10,7 +10,8 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "raw_sd_player.h"
+#include "player.h"
+#include "LED_Fading.h"
 
 
 void SystemClock_Config(void);
@@ -56,25 +57,22 @@ int main(void)
 	// initCubeProgram();
 
 	change_effect(0);
+	LED_Fading_init();
 
 	/* We should never get here as control is now taken by the scheduler */
 	for (;;)
 	{
 		uint32_t tick = HAL_GetTick();
-		// HAL_GPIO_TogglePin(LED_GPIO_PORT, LED_PIN);
 		UARTCmd_Tick(&uart_cmd);
 		button_tick();
 		uart_cmd_mode_watchdog();
-		// UARTCmd_Send((uint8_t *)cmd_ping, sizeof(cmd_ping), &uart_cmd);
-		// printf("ping pong\n");
-		// processImage(rgbImage);
-		// HAL_Delay(1);
 
 		if( Mode_intern == get_mode() ) {
 			static uint32_t nextImageTick = 50;
 			if(nextImageTick <= tick) {
 				nextImageTick = tick + 50;
 				render_effect(rgbImage);
+				// LED_Fading_run(rgbImage);
 				processImage(rgbImage);
 			}
 		}
